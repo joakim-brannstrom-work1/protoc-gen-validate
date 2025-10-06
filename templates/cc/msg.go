@@ -165,7 +165,11 @@ bool validate(const google::protobuf::Message& topParent, const {{ class_base . 
 				{{ end -}}
 					default:
 				{{- if required . }}
-						*err = "field: " {{ .Name | quote | lit }} ", reason: is required";
+						if (err) {
+							const char* errMsg = "oneof field: " {{ .Name | quote | lit }} ", is required";
+							err->log(errMsg);
+							err->done();
+						}
 						return false;
 				{{ end }}
 					break;
