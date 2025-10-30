@@ -52,6 +52,7 @@ BaseValidator::customValidators() {
     return *validator_map;
 }
 
+// NOLINTBEGIN(misc-use-internal-linkage)
 int OneCharLen(const char* src) { return "\1\1\1\1\1\1\1\1\1\1\1\1\2\2\3\4"[(*src & 0xFF) >> 4]; }
 
 int UTF8FirstLetterNumBytes(const char* utf8_str, int str_len) {
@@ -73,5 +74,6 @@ size_t Utf8Len(const std::string& narrow_string) {
     }
     return unicode_len;
 }
+// NOLINTEND(misc-use-internal-linkage)
 
 } // namespace pgv

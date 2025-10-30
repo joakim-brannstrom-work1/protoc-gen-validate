@@ -15,6 +15,8 @@
 namespace pgv {
 class ValidationLog {
 public:
+    virtual ~ValidationLog() = default;
+
     /// Called one or more times to build up an error message.
     virtual void log(const std::string_view& v) = 0;
 
