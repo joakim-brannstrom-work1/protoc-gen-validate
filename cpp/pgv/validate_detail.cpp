@@ -3,7 +3,7 @@
  * See http://www.apache.org/licenses/LICENSE-2.0 for details.
  */
 
-#include "pgv/validate.hpp"
+#include "pgv/validate_detail.hpp"
 
 namespace pgv {
 
@@ -11,7 +11,7 @@ bool BaseValidator::AbstractCheckMessage(const google::protobuf::Message& topPar
                                          const google::protobuf::Message& m, ValidationLog* err) {
     // Polymorphic lookup is used to see if there is a matching concrete validator. If so, call it.
     // Otherwise return success.
-    auto it = abstractValidators().find(std::type_index(typeid(m)));
+    auto it = abstractValidators().find(static_cast<const void*>(m.GetDescriptor()));
     if (it == abstractValidators().end()) {
         return true;
     }
@@ -23,30 +23,30 @@ bool BaseValidator::CustomCheckMessage(const google::protobuf::Message& topParen
                                        const google::protobuf::Message& m, ValidationLog* err) {
     // Polymorphic lookup is used to see if there is a matching concrete validator. If so, call it.
     // Otherwise return success.
-    auto it = customValidators().find(std::type_index(typeid(m)));
+    auto it = customValidators().find(static_cast<const void*>(m.GetDescriptor()));
     if (it == customValidators().end()) {
         return false;
     }
     return it->second(topParent, parent, m, err);
 }
 
-std::unordered_map<std::type_index,
+std::unordered_map<const void*,
                    std::function<bool(const google::protobuf::Message&,
                                       const google::protobuf::Message&, ValidationLog*)>>&
 BaseValidator::abstractValidators() {
     static auto* validator_map = new std::unordered_map<
-        std::type_index, std::function<bool(const google::protobuf::Message&,
-                                            const google::protobuf::Message&, ValidationLog*)>>();
+        const void*, std::function<bool(const google::protobuf::Message&,
+                                        const google::protobuf::Message&, ValidationLog*)>>();
     return *validator_map;
 }
 
 std::unordered_map<
-    std::type_index,
+    const void*,
     std::function<bool(const google::protobuf::Message&, const google::protobuf::Message&,
                        const google::protobuf::Message&, ValidationLog*)>>&
 BaseValidator::customValidators() {
     static auto* validator_map = new std::unordered_map<
-        std::type_index,
+        const void*,
         std::function<bool(const google::protobuf::Message&, const google::protobuf::Message&,
                            const google::protobuf::Message&, ValidationLog*)>>();
     return *validator_map;
