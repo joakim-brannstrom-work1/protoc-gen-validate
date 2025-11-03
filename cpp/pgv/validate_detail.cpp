@@ -30,6 +30,8 @@ bool BaseValidator::CustomCheckMessage(const google::protobuf::Message& topParen
     return it->second(topParent, parent, m, err);
 }
 
+void BaseValidator::internalKeepSymbol() {}
+
 std::unordered_map<const void*,
                    std::function<bool(const google::protobuf::Message&,
                                       const google::protobuf::Message&, ValidationLog*)>>&

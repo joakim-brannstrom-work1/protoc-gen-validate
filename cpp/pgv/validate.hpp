@@ -62,6 +62,12 @@ public:
                                    const google::protobuf::Message& parent,
                                    const google::protobuf::Message& m, ValidationLog* err);
 
+    /**
+     * Called by validate functions to ensure that the global variable that
+     * register the validator isn't removed by the linker.
+     */
+    void internalKeepSymbol();
+
 protected:
     // Used to implement AbstractCheckMessage() above. Every message that is linked into the binary
     // will register itself by type_index, allowing for polymorphic lookup later.
